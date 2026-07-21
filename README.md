@@ -5,7 +5,9 @@ This repo holds code to build a small language model from Scratch
 
 Flow:
 TokenizeEmbeddings
-    Input text -> Token IDs -> Token Embeddings
+    Input text -> Tokenized Text-> Token IDs -> Token Embeddings -> Positional Embeddings -> Input Embeddings
+    Chapter 2
+    ![alt text](image.png)
 
 To get started
 1) install the packages using command
