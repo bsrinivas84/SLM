@@ -62,6 +62,8 @@ def main():
 
 	print("Token IDs:\n", inputs)
 	print("\nInputs shape:\n", inputs.shape)
+	print("Target IDs:\n", targets)
+
 
 	vocab_size = 50257
 	output_dim = 256
@@ -71,7 +73,7 @@ def main():
 	token_embeddings = token_embedding_layer(inputs)
 	print("\nToken embeddings shape:\n", token_embeddings.shape)
 
-	pos_embedding_layer = torch.nn.Embedding(max_length, output_dim).to(device)
+	pos_embedding_layer = torch.nn.Embedding(max_length, output_dim).to(device) # these are random weights, actual once are learnt later
 	print("\nPosition embedding weights:\n", pos_embedding_layer.weight)
 
 	pos_embeddings = pos_embedding_layer(torch.arange(max_length, device=device))
