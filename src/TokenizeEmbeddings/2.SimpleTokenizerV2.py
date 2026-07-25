@@ -43,5 +43,5 @@ print(vocab_size) # 1212 instead of 1130 + 2 special tokens
 
 vocab = {word: idx for idx, word in enumerate(all_tokens)}
 tokenizer = SimpleTokenizerV1(vocab)
-
+print(tokenizer.encode("Hello I found the couple at tea beneath their palm-trees"))
 print(tokenizer.decode(tokenizer.encode("Hello I found the couple at tea beneath their palm-trees")))
