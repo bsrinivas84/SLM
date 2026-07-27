@@ -22,7 +22,13 @@ LLM architecture
     ![alt text](Ch4-1_LayerNorm.png)
     4_3. TransforerBlockInternals
     ![alt text](Ch4-TransforerBlockInternals.png)
-
+    4.4 Shortcut Connection
+    ![alt text](Ch4-ShortcutConnection.png)
+    4.5 Transformer Block
+    ![alt text](Ch4-TransformerBlock-Detail.png)
+    4.6 GPT Model
+    4.7 Generate Text
+    ![alt text](Ch4-GenerateText.png)
 To get started
 =================
 1) install the packages using command
