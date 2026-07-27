@@ -15,6 +15,9 @@ Attention Mechanism
     1.Simplified Self-attention-> 2. Self-Attention -> 3. Causal Attention -> 4. Multi-Head Attention
     ![alt text](Ch3.png)
 
+LLM architecture
+    ![alt text](Ch4-TransformerBlock.png)
+
 To get started
 =================
 1) install the packages using command
