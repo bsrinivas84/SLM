@@ -17,6 +17,11 @@ Attention Mechanism
 
 LLM architecture
     ![alt text](Ch4-TransformerBlock.png)
+    ![alt text](Ch4-TransformerPipeline.png)
+    4_2. Layer Normalization
+    ![alt text](Ch4-1_LayerNorm.png)
+    4_3. TransforerBlockInternals
+    ![alt text](Ch4-TransforerBlockInternals.png)
 
 To get started
 =================
