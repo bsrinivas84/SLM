@@ -1,6 +1,8 @@
 # SLM
 Small Language Model from Scratch
 
+For original code refer - https://github.com/rasbt/LLMs-from-scratch/blob/main/README.md
+
 This repo holds code to build a small language model from Scratch
 ![alt text](FullPipeline.png)
 
@@ -16,19 +18,23 @@ Attention Mechanism
     ![alt text](Ch3.png)
 
 LLM architecture
-    ![alt text](Ch4-TransformerBlock.png)
-    ![alt text](Ch4-TransformerPipeline.png)
+    ![TransformerBlock](Ch4-TransformerBlock.png)
+    ![TransformerPipeline](Ch4-TransformerPipeline.png)
     4_2. Layer Normalization
-    ![alt text](Ch4-1_LayerNorm.png)
+    ![LayerNorm](Ch4-1_LayerNorm.png)
     4_3. TransforerBlockInternals
-    ![alt text](Ch4-TransforerBlockInternals.png)
+    ![TransforerBlockInternals](Ch4-TransforerBlockInternals.png)
     4.4 Shortcut Connection
-    ![alt text](Ch4-ShortcutConnection.png)
+    ![ShortcutConnection](Ch4-ShortcutConnection.png)
     4.5 Transformer Block
-    ![alt text](Ch4-TransformerBlock-Detail.png)
+    ![TransformerBlock-Detail](Ch4-TransformerBlock-Detail.png)
     4.6 GPT Model
     4.7 Generate Text
-    ![alt text](Ch4-GenerateText.png)
+    ![GenerateText](Ch4-GenerateText.png)
+
+Training:
+    Overview ![Training5.png](Ch5-Training5.png)
+
 To get started
 =================
 1) install the packages using command
