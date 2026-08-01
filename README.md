@@ -34,6 +34,7 @@ LLM architecture
 
 Cross Entropy Loss:
     ![CrossEntropyLoss](Images\Ch5-CrossEntropyLoss.png)
+    ![Training](Images\Ch5-TrainingLoop.png)
 
 Other:
     ![LastLayerWordDerivation1](LastLayerWordDerivation1.png)
