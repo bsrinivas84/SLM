@@ -42,6 +42,17 @@ Other:
 
 Training:
     Overview ![Training5.png](Images\Ch5-Training5.png)
+    Model sizes ![Different Model Sizes](Images\Ch6-ModelSizes.png)
+        python 5.5.LoadOpenAIWeights.py --model gpt2-small    # 124M (default)
+        python 5.5.LoadOpenAIWeights.py --model gpt2-medium   # 355M
+        python 5.5.LoadOpenAIWeights.py --model gpt2-large    # 774M
+        python 5.5.LoadOpenAIWeights.py --model gpt2-xl   
+
+        Model	Parameters	Download Size
+        gpt2-small	124M	~500 MB
+        gpt2-medium	355M	~1.4 GB
+        gpt2-large	774M	~3.1 GB
+        gpt2-xl	1558M	~6.2 GB
 
 To get started
 =================
