@@ -217,6 +217,7 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-#Exclude data/models directory from version control
+#Exclude data/models directory and large model files from version control
 data/models/
+data/model_weights.pth
 
