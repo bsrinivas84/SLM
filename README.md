@@ -1,66 +1,118 @@
 # SLM
-Small Language Model from Scratch
 
-For original code refer - https://github.com/rasbt/LLMs-from-scratch/blob/main/README.md
+## 1. Small Language Model from Scratch
 
-This repo holds code to build a small language model from Scratch
+This repository contains code for building a small language model from scratch.
+It follows the concepts and implementation presented in
+[LLMs from Scratch](https://github.com/rasbt/LLMs-from-scratch).
+
 ![Full language model pipeline](Images/FullPipeline.png)
 
-Flow:
-=============
-TokenizeEmbeddings
-    Input text -> Tokenized Text-> Token IDs -> Token Embeddings -> Positional Embeddings -> Input Embeddings
-    Chapter 2
-    ![Tokenization and embeddings](Images/Ch2.png)
+## 2. Architecture Flow
 
-Attention Mechanism
-    1.Simplified Self-attention-> 2. Self-Attention -> 3. Causal Attention -> 4. Multi-Head Attention
-    ![Attention mechanism](Images/Ch3-Attention.png)
+### 2.1 Tokenization and Embeddings
 
-LLM architecture
-    ![TransformerBlock](Images/Ch4-TransformerBlock.png)
-    ![TransformerPipeline](Images/Ch4-TransformerPipeline.png)
-    4_2. Layer Normalization
-    ![LayerNorm](Images/Ch4-1_LayerNorm.png)
-    4_3. TransforerBlockInternals
-    ![TransforerBlockInternals](Images/Ch4-TransforerBlockInternals.png)
-    4.4 Shortcut Connection
-    ![ShortcutConnection](Images/Ch4-ShortcutConnection.png)
-    4.5 Transformer Block
-    ![TransformerBlock-Detail](Images/Ch4-TransformerBlock-Detail.png)
-    4.6 GPT Model
-    4.7 Generate Text
-    ![GenerateText](Images/Ch4-GenerateText.png)
+1. Input text
+2. Tokenized text
+3. Token IDs
+4. Token embeddings
+5. Positional embeddings
+6. Input embeddings
 
-Cross Entropy Loss:
-    ![CrossEntropyLoss](Images/Ch5-CrossEntropyLoss.png)
-    ![Training](Images/Ch5-TrainingLoop.png)
+![Tokenization and embeddings](Images/Ch2.png)
 
-Other:
-    ![LastLayerWordDerivation1](Images/LastLayerWordDerivation1.png)
-    ![LastLayerWordDerivation2](Images/LastLayerWordDerivation2.png)
+### 2.2 Attention Mechanism
 
-Training:
-    Overview ![Training5.png](Images/Ch5-Training5.png)
-    Model sizes ![Different Model Sizes](Images/Ch6-ModelSizes.png)
-        python 5.5.LoadOpenAIWeights.py --model gpt2-small    # 124M (default)
-        python 5.5.LoadOpenAIWeights.py --model gpt2-medium   # 355M
-        python 5.5.LoadOpenAIWeights.py --model gpt2-large    # 774M
-        python 5.5.LoadOpenAIWeights.py --model gpt2-xl   
+1. Simplified self-attention
+2. Self-attention with trainable weights
+3. Causal attention
+4. Multi-head attention
 
-        Model	Parameters	Download Size
-        gpt2-small	124M	~500 MB
-        gpt2-medium	355M	~1.4 GB
-        gpt2-large	774M	~3.1 GB
-        gpt2-xl	1558M	~6.2 GB
+![Attention mechanism](Images/Ch3-Attention.png)
 
-Fine-Tuning:
-    ![FineTuning](Images/Ch6-FineTuning.png)
-     Stage 1: Download -> Preprocess -> Data Loaders
-     Stage 2: Initialize model -> Download Pre-Trained Weights -> Modify Model for Fine-Tuning -> Implement Eval
-     Stage 3:  Fine-Tune -> Eval Fine-Tuned Model -> Use Model for New Data
-     
-To get started
-=================
-1) install the packages using command
+### 2.3 LLM Architecture
+
+![Transformer block](Images/Ch4-TransformerBlock.png)
+
+![Transformer pipeline](Images/Ch4-TransformerPipeline.png)
+
+#### 2.3.1 Layer Normalization
+
+![Layer normalization](Images/Ch4-1_LayerNorm.png)
+
+#### 2.3.2 Transformer Block Internals
+
+![Transformer block internals](Images/Ch4-TransforerBlockInternals.png)
+
+#### 2.3.3 Shortcut Connections
+
+![Shortcut connection](Images/Ch4-ShortcutConnection.png)
+
+#### 2.3.4 Transformer Block
+
+![Transformer block details](Images/Ch4-TransformerBlock-Detail.png)
+
+#### 2.3.5 GPT Model and Text Generation
+
+![Text generation](Images/Ch4-GenerateText.png)
+
+### 2.4 Loss and Training Loop
+
+![Cross-entropy loss](Images/Ch5-CrossEntropyLoss.png)
+
+![Training loop](Images/Ch5-TrainingLoop.png)
+
+### 2.5 Output Word Derivation
+
+![Last-layer word derivation, part 1](Images/LastLayerWordDerivation1.png)
+
+![Last-layer word derivation, part 2](Images/LastLayerWordDerivation2.png)
+
+## 3. Training
+
+### 3.1 Training Overview
+
+![Training overview](Images/Ch5-Training5.png)
+
+### 3.2 Model Sizes
+
+![Different model sizes](Images/Ch6-ModelSizes.png)
+
+| Model | Parameters | Approximate download size |
+| --- | ---: | ---: |
+| GPT-2 Small | 124M | 500 MB |
+| GPT-2 Medium | 355M | 1.4 GB |
+| GPT-2 Large | 774M | 3.1 GB |
+| GPT-2 XL | 1,558M | 6.2 GB |
+
+Load a pretrained model with one of the following commands:
+
+```powershell
+python 5.5.LoadOpenAIWeights.py --model gpt2-small
+python 5.5.LoadOpenAIWeights.py --model gpt2-medium
+python 5.5.LoadOpenAIWeights.py --model gpt2-large
+python 5.5.LoadOpenAIWeights.py --model gpt2-xl
+```
+
+## 4. Fine-Tuning
+
+![Fine-tuning pipeline](Images/Ch6-FineTuning.png)
+
+1. Download and preprocess the dataset, then create data loaders.
+2. Initialize the model, load pretrained weights, and adapt it for fine-tuning.
+3. Fine-tune and evaluate the model, then use it to classify new data.
+
+## 5. Getting Started
+
+### 5.1 Create and Activate a Virtual Environment
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+### 5.2 Install Dependencies
+
+```powershell
 pip install -r requirements.txt
+```
