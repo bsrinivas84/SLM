@@ -99,8 +99,9 @@ python 5.5.LoadOpenAIWeights.py --model gpt2-xl
 ![Fine-tuning pipeline](Images/Ch6-FineTuning.png)
 
 1. Download and preprocess the dataset, then create data loaders.
-2. Initialize the model, load pretrained weights, and adapt it for fine-tuning.
+2. Initialize the model, load pretrained weights, and adapt it for fine-tuning (Modify last layer).
 3. Fine-tune and evaluate the model, then use it to classify new data.
+![FineTuning-Layers](Images/Ch6-FineTuning-Layers.png)
 
 ## 5. Getting Started
 
