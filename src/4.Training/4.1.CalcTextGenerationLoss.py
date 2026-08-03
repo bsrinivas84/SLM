@@ -4,19 +4,19 @@ import tiktoken
 
 
 GPT_CONFIG_124M = {
-	"vocab_size": 50257,
-	"context_length": 1024,
-	"emb_dim": 768,
-	"n_heads": 12,
-	"n_layers": 12,
-	"drop_rate": 0.1,
-	"qkv_bias": False,
+    "vocab_size": 50257,
+    "context_length": 1024,
+    "emb_dim": 768,
+    "n_heads": 12,
+    "n_layers": 12,
+    "drop_rate": 0.1,
+    "qkv_bias": False,
 }
 
 
 def token_ids_to_text(token_ids, tokenizer):
-	flat = token_ids.flatten()
-	return tokenizer.decode(flat.tolist())
+    flat = token_ids.flatten()
+    return tokenizer.decode(flat.tolist())
 
 
 torch.manual_seed(123)
@@ -26,13 +26,13 @@ model.eval()
 tokenizer = tiktoken.get_encoding("gpt2")
 
 inputs = torch.tensor([[16833, 3626, 6100],
-					   [40, 1107, 588]])
+                       [40, 1107, 588]])
 
 targets = torch.tensor([[3626, 6100, 345],
-						[1107, 588, 11311]])
+                        [1107, 588, 11311]])
 
 with torch.no_grad():
-	logits = model(inputs)
+    logits = model(inputs)
 
 print("logits.shape:", logits.shape)
 
