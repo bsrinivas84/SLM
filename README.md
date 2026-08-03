@@ -54,6 +54,12 @@ Training:
         gpt2-large	774M	~3.1 GB
         gpt2-xl	1558M	~6.2 GB
 
+Fine-Tuning:
+     ![FineTuning](Images\Ch6-FineTuning.png)
+     Stage 1: Download -> Preprocess -> Data Loaders
+     Stage 2: Initialize model -> Download Pre-Trained Weights -> Modify Model for Fine-Tuning -> Implement Eval
+     Stage 3:  Fine-Tune -> Eval Fine-Tuned Model -> Use Model for New Data
+     
 To get started
 =================
 1) install the packages using command
