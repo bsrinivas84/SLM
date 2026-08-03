@@ -1,3 +1,5 @@
+"""Demonstrate GPT-2 byte-pair encoding."""
+
 #Unknow words are replaced by <unk> token which makes them all look same
 #Break words into individual english characters
 

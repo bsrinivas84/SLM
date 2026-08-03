@@ -1,3 +1,5 @@
+"""Download and parse legacy OpenAI GPT-2 checkpoints."""
+
 import os
 
 import requests
@@ -6,8 +8,13 @@ import numpy as np
 from tqdm import tqdm
 
 
-def download_and_load_gpt2(model_size, models_dir):
+def download_and_load_gpt2(model_size: str, models_dir: str | os.PathLike[str]) -> tuple[dict[str, int], dict[str, object]]:
     # Validate model size
+    """Download a legacy GPT-2 checkpoint and return its settings and parameters.
+
+        Raises:
+            ValueError: If ``model_size`` is unsupported.
+        """
     allowed_sizes = ("124M", "355M", "774M", "1558M")
     if model_size not in allowed_sizes:
         raise ValueError(f"Model size not in {allowed_sizes}")
@@ -38,7 +45,8 @@ def download_and_load_gpt2(model_size, models_dir):
     return settings, params
 
 
-def download_file(url, destination, backup_url=None):
+def download_file(url: str, destination: str | os.PathLike[str], backup_url: str | None = None) -> None:
+    """Download a URL to a path, trying an optional backup after request failure."""
     def _attempt_download(download_url):
         response = requests.get(download_url, stream=True, timeout=60)
         response.raise_for_status()
@@ -116,8 +124,9 @@ def download_file(url, destination):
 """
 
 
-def load_gpt2_params_from_tf_ckpt(ckpt_path, settings):
+def load_gpt2_params_from_tf_ckpt(ckpt_path: str, settings: dict[str, int]) -> dict[str, object]:
     # Initialize parameters dictionary with empty blocks for each layer
+    """Return nested NumPy parameter arrays loaded from a TensorFlow checkpoint."""
     params = {"blocks": [{} for _ in range(settings["n_layer"])]}
 
     # Iterate over each variable in the checkpoint

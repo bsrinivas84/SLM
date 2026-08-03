@@ -1,3 +1,5 @@
+"""Implement compact self-attention modules."""
+
 import torch
 import torch.nn as nn
 
@@ -5,13 +7,15 @@ import torch.nn as nn
 
 
 class SelfAttention_v1(nn.Module):
-    def __init__(self, d_in, d_out):
+    """Compute scaled dot-product self-attention with parameter matrices."""
+    def __init__(self, d_in: int, d_out: int) -> None:
         super().__init__()
         self.W_query = nn.Parameter(torch.rand(d_in, d_out))
         self.W_key = nn.Parameter(torch.rand(d_in, d_out))
         self.W_value = nn.Parameter(torch.rand(d_in, d_out))
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Transform ``(tokens, d_in)`` inputs into ``(tokens, d_out)`` context vectors."""
         queries = x @ self.W_query
         keys = x @ self.W_key
         values = x @ self.W_value
@@ -41,13 +45,15 @@ print(sa_v1(inputs))
 
 
 class SelfAttention_v2(nn.Module):
-    def __init__(self, d_in, d_out, bias=False):
+    """Compute scaled dot-product self-attention with linear projections."""
+    def __init__(self, d_in: int, d_out: int, bias: bool = False) -> None:
         super().__init__()
         self.W_query = nn.Linear(d_in, d_out, bias=bias)
         self.W_keys = nn.Linear(d_in, d_out, bias=bias)
         self.W_values = nn.Linear(d_in, d_out, bias=bias)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Transform ``(tokens, d_in)`` inputs into ``(tokens, d_out)`` context vectors."""
         queries = self.W_query(x)
         keys = self.W_keys(x)
         values = self.W_values(x)

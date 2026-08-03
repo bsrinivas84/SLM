@@ -1,3 +1,5 @@
+"""Assemble transformer blocks into a GPT language model."""
+
 import torch
 import torch.nn as nn
 import tiktoken
@@ -23,7 +25,8 @@ GPT_CONFIG_124M = {
 }
 
 class GPTModel(nn.Module):
-    def __init__(self, cfg):
+    """Map token-ID sequences to vocabulary logits."""
+    def __init__(self, cfg: dict[str, int | float | bool]) -> None:
         super().__init__()
         self.tok_emb = nn.Embedding(cfg["vocab_size"], cfg["emb_dim"])
         self.pos_emb = nn.Embedding(cfg["context_length"], cfg["emb_dim"])
@@ -42,7 +45,8 @@ class GPTModel(nn.Module):
             cfg["emb_dim"], cfg["vocab_size"], bias=False
         )
 
-    def forward(self, in_idx):
+    def forward(self, in_idx: torch.Tensor) -> torch.Tensor:
+        """Return ``(batch, tokens, vocab_size)`` logits for ``(batch, tokens)`` IDs."""
         batch_size, seq_len = in_idx.shape
         tok_embeds = self.tok_emb(in_idx)
         pos_embeds = self.pos_emb(torch.arange(seq_len, device=in_idx.device))

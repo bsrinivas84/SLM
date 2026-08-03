@@ -1,3 +1,5 @@
+"""Train and evaluate a sample email spam classifier."""
+
 import argparse
 import csv
 import re
@@ -18,6 +20,11 @@ TOKEN_PATTERN = re.compile(r"[a-z0-9']+")
 
 
 def load_emails(path: Path) -> tuple[list[str], list[int]]:
+    """Return email texts and integer targets read from a CSV file.
+
+        Raises:
+            ValueError: If the file is empty or lacks required columns.
+        """
     with path.open(encoding="utf-8", newline="") as csv_file:
         rows = list(csv.DictReader(csv_file))
 
@@ -28,10 +35,12 @@ def load_emails(path: Path) -> tuple[list[str], list[int]]:
 
 
 def tokenize(text: str) -> list[str]:
+    """Return normalized word-like tokens from email text."""
     return TOKEN_PATTERN.findall(text.lower())
 
 
 def build_vocabulary(emails: list[str]) -> dict[str, int]:
+    """Return deterministic token-to-index mappings for the supplied emails."""
     token_counts = Counter(token for email in emails for token in tokenize(email))
     return {
         token: index
@@ -40,6 +49,7 @@ def build_vocabulary(emails: list[str]) -> dict[str, int]:
 
 
 def vectorize(emails: list[str], vocabulary: dict[str, int]) -> torch.Tensor:
+    """Return binary feature vectors shaped ``(emails, vocabulary_size)``."""
     vectors = torch.zeros((len(emails), len(vocabulary)), dtype=torch.float32)
     for row, email in enumerate(emails):
         for token in set(tokenize(email)):
@@ -49,6 +59,7 @@ def vectorize(emails: list[str], vocabulary: dict[str, int]) -> torch.Tensor:
 
 
 def stratified_split(labels: list[int]) -> tuple[list[int], list[int]]:
+    """Return training and validation indices with class-aware sampling."""
     train_indices: list[int] = []
     validation_indices: list[int] = []
     class_counts = Counter()
@@ -63,6 +74,7 @@ def stratified_split(labels: list[int]) -> tuple[list[int], list[int]]:
 def evaluate(
     model: nn.Module, features: torch.Tensor, labels: torch.Tensor, criterion: nn.Module
 ) -> tuple[float, float]:
+    """Return cross-entropy loss and accuracy for a feature batch."""
     model.eval()
     with torch.no_grad():
         logits = model(features)
@@ -74,6 +86,7 @@ def evaluate(
 def train_classifier(
     emails: list[str], labels: list[int], epochs: int
 ) -> tuple[nn.Module, dict[str, int], torch.Tensor, torch.Tensor]:
+    """Train a classifier and return it, its vocabulary, and validation tensors."""
     train_indices, validation_indices = stratified_split(labels)
     train_emails = [emails[index] for index in train_indices]
     vocabulary = build_vocabulary(train_emails)
@@ -117,6 +130,7 @@ def train_classifier(
 def save_confusion_matrix(
     model: nn.Module, features: torch.Tensor, targets: torch.Tensor, path: Path
 ) -> None:
+    """Save a 2-by-2 confusion-matrix image for feature and target tensors."""
     model.eval()
     with torch.no_grad():
         predictions = model(features).argmax(dim=1)
@@ -156,6 +170,7 @@ def save_confusion_matrix(
 
 
 def classify(model: nn.Module, vocabulary: dict[str, int], email: str) -> None:
+    """Print the predicted class and probability for one email."""
     model.eval()
     with torch.no_grad():
         probabilities = torch.softmax(model(vectorize([email], vocabulary)), dim=1)[0]
@@ -165,6 +180,7 @@ def classify(model: nn.Module, vocabulary: dict[str, int], email: str) -> None:
 
 
 def main() -> None:
+    """Run the module demonstration or data-preparation workflow."""
     parser = argparse.ArgumentParser(description="Train a sample email spam classifier")
     parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--email", help="Optional email text to classify after training")

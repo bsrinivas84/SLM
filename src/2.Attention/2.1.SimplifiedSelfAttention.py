@@ -1,3 +1,5 @@
+"""Demonstrate simplified self-attention computations."""
+
 import torch
 
 inputs = torch.tensor(

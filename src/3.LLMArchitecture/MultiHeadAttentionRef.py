@@ -1,3 +1,5 @@
+"""Provide reference dataset and multi-head attention implementations."""
+
 import tiktoken
 import torch
 import torch.nn as nn
@@ -5,7 +7,8 @@ from torch.utils.data import Dataset, DataLoader
 
 
 class GPTDatasetV1(Dataset):
-    def __init__(self, txt, tokenizer, max_length, stride):
+    """Store overlapping token-ID inputs and next-token targets."""
+    def __init__(self, txt: str, tokenizer: tiktoken.Encoding, max_length: int, stride: int) -> None:
         self.input_ids = []
         self.target_ids = []
 
@@ -19,15 +22,16 @@ class GPTDatasetV1(Dataset):
             self.input_ids.append(torch.tensor(input_chunk))
             self.target_ids.append(torch.tensor(target_chunk))
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.input_ids)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
         return self.input_ids[idx], self.target_ids[idx]
 
 
-def create_dataloader_v1(txt, batch_size=4, max_length=256, stride=128, shuffle=True, drop_last=True, num_workers=0):
+def create_dataloader_v1(txt: str, batch_size: int = 4, max_length: int = 256, stride: int = 128, shuffle: bool = True, drop_last: bool = True, num_workers: int = 0) -> DataLoader:
     # Initialize the tokenizer.
+    """Return batches of ``(input_ids, target_ids)`` tensors shaped ``(batch, max_length)``."""
     tokenizer = tiktoken.get_encoding("gpt2")
 
     # Create dataset.
@@ -46,7 +50,8 @@ def create_dataloader_v1(txt, batch_size=4, max_length=256, stride=128, shuffle=
 
 
 class MultiHeadAttention(nn.Module):
-    def __init__(self, d_in, d_out, context_length, dropout, num_heads, qkv_bias=False):
+    """Compute batched causal attention across multiple heads."""
+    def __init__(self, d_in: int, d_out: int, context_length: int, dropout: float, num_heads: int, qkv_bias: bool = False) -> None:
         super().__init__()
         assert d_out % num_heads == 0, "d_out must be divisible by num_heads"
 
@@ -64,7 +69,8 @@ class MultiHeadAttention(nn.Module):
             torch.triu(torch.ones(context_length, context_length), diagonal=1),
         )
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Return causal contexts shaped ``(batch, tokens, d_out)``."""
         b, num_tokens, d_in = x.shape
 
         keys = self.W_key(x)

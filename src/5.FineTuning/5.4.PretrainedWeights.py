@@ -1,3 +1,5 @@
+"""Initialize a pretrained GPT-2 model for fine-tuning."""
+
 import importlib.util
 import sys
 from pathlib import Path
@@ -12,6 +14,11 @@ CHOOSE_MODEL = "gpt2-small"
 
 
 def import_training_module(module_name: str, filename: str) -> ModuleType:
+    """Load and return a Python module from the training directory.
+
+        Raises:
+            ImportError: If an import specification or loader cannot be created.
+        """
     module_path = TRAINING_DIR / filename
     spec = importlib.util.spec_from_file_location(module_name, module_path)
     if spec is None or spec.loader is None:
@@ -27,6 +34,7 @@ PREVIOUS_CHAPTERS = import_training_module("PreviousChapters", "PreviousChapters
 
 
 def initialize_pretrained_model() -> tuple[torch.nn.Module, dict[str, object]]:
+    """Return a pretrained GPT-2 model and its local configuration."""
     weight_loader = import_training_module(
         "load_openai_weights", "4.5.LoadOpenAIWeights.py"
     )
@@ -35,6 +43,11 @@ def initialize_pretrained_model() -> tuple[torch.nn.Module, dict[str, object]]:
 
 
 def generate_text(model: torch.nn.Module, config: dict[str, object]) -> str:
+    """Generate and return sample text with a pretrained model.
+
+        Raises:
+            TypeError: If the configured context length is not an integer.
+        """
     tokenizer = tiktoken.get_encoding("gpt2")
     context_length = config["context_length"]
     if not isinstance(context_length, int):

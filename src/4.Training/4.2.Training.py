@@ -1,3 +1,5 @@
+"""Train and evaluate a GPT language model."""
+
 import tiktoken
 import torch
 from pathlib import Path
@@ -16,17 +18,20 @@ GPT_CONFIG_124M = {
 }
 
 
-def text_to_token_ids(text, tokenizer):
+def text_to_token_ids(text: str, tokenizer: tiktoken.Encoding) -> torch.Tensor:
+    """Encode text as a token tensor shaped ``(1, tokens)``."""
     encoded = tokenizer.encode(text, allowed_special={"<|endoftext|>"})
     return torch.tensor(encoded).unsqueeze(0)
 
 
-def token_ids_to_text(token_ids, tokenizer):
+def token_ids_to_text(token_ids: torch.Tensor, tokenizer: tiktoken.Encoding) -> str:
+    """Decode a token-ID tensor into text."""
     flat = token_ids.squeeze(0)
     return tokenizer.decode(flat.tolist())
 
 
-def calc_loss_batch(input_batch, target_batch, model, device):
+def calc_loss_batch(input_batch: torch.Tensor, target_batch: torch.Tensor, model: torch.nn.Module, device: torch.device) -> torch.Tensor:
+    """Return scalar cross-entropy loss for ``(batch, tokens)`` input and target IDs."""
     input_batch = input_batch.to(device)
     target_batch = target_batch.to(device)
     logits = model(input_batch)
@@ -34,7 +39,8 @@ def calc_loss_batch(input_batch, target_batch, model, device):
     return loss
 
 
-def calc_loss_loader(data_loader, model, device, num_batches=None):
+def calc_loss_loader(data_loader: torch.utils.data.DataLoader, model: torch.nn.Module, device: torch.device, num_batches: int | None = None) -> float:
+    """Return mean batch loss, or NaN when the loader is empty."""
     total_loss = 0.0
     if len(data_loader) == 0:
         return float("nan")
@@ -52,7 +58,8 @@ def calc_loss_loader(data_loader, model, device, num_batches=None):
     return total_loss / num_batches
 
 
-def evaluate_model(model, train_loader, val_loader, device, eval_iter):
+def evaluate_model(model: torch.nn.Module, train_loader: torch.utils.data.DataLoader, val_loader: torch.utils.data.DataLoader, device: torch.device, eval_iter: int) -> tuple[float, float]:
+    """Return training and validation losses while preserving training mode."""
     model.eval()
     with torch.no_grad():
         train_loss = calc_loss_loader(train_loader, model, device, num_batches=eval_iter)
@@ -61,7 +68,8 @@ def evaluate_model(model, train_loader, val_loader, device, eval_iter):
     return train_loss, val_loss
 
 
-def generate_and_print_sample(model, device, start_context, tokenizer):
+def generate_and_print_sample(model: torch.nn.Module, device: torch.device, start_context: str, tokenizer: tiktoken.Encoding) -> None:
+    """Generate and print one text sample, then restore training mode."""
     model.eval()
     context_size = model.pos_emb.weight.shape[0]
     encoded = text_to_token_ids(start_context, tokenizer).to(device)
@@ -79,9 +87,10 @@ def generate_and_print_sample(model, device, start_context, tokenizer):
     model.train()
 
 
-def train_model_simple(model, train_loader, val_loader, optimizer, device, num_epochs,
-                       eval_freq, eval_iter, start_context, tokenizer):
+def train_model_simple(model: torch.nn.Module, train_loader: torch.utils.data.DataLoader, val_loader: torch.utils.data.DataLoader, optimizer: torch.optim.Optimizer, device: torch.device, num_epochs: int,
+                       eval_freq: int, eval_iter: int, start_context: str, tokenizer: tiktoken.Encoding) -> tuple[list[float], list[float], list[int]]:
     # Initialize lists to track losses and tokens seen.
+    """Train the model and return training losses, validation losses, and token counts."""
     train_losses, val_losses, track_tokens_seen = [], [], []
     tokens_seen, global_step = 0, -1
 

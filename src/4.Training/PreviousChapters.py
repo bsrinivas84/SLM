@@ -1,3 +1,5 @@
+"""Collect reusable GPT components from earlier chapters."""
+
 # Copyright (c) Sebastian Raschka under Apache License 2.0 (see LICENSE.txt).
 # Source for "Build a Large Language Model From Scratch"
 #   - https://www.manning.com/books/build-a-large-language-model-from-scratch
@@ -18,7 +20,8 @@ from torch.utils.data import Dataset, DataLoader
 
 
 class GPTDatasetV1(Dataset):
-    def __init__(self, txt, tokenizer, max_length, stride):
+    """Store overlapping token-ID inputs and next-token targets."""
+    def __init__(self, txt: str, tokenizer: tiktoken.Encoding, max_length: int, stride: int) -> None:
         self.input_ids = []
         self.target_ids = []
 
@@ -32,16 +35,17 @@ class GPTDatasetV1(Dataset):
             self.input_ids.append(torch.tensor(input_chunk))
             self.target_ids.append(torch.tensor(target_chunk))
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.input_ids)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
         return self.input_ids[idx], self.target_ids[idx]
 
 
-def create_dataloader_v1(txt, batch_size=4, max_length=256,
-                         stride=128, shuffle=True, drop_last=True, num_workers=0):
+def create_dataloader_v1(txt: str, batch_size: int = 4, max_length: int = 256,
+                         stride: int = 128, shuffle: bool = True, drop_last: bool = True, num_workers: int = 0) -> DataLoader:
     # Initialize the tokenizer
+    """Return batches of ``(input_ids, target_ids)`` tensors shaped ``(batch, max_length)``."""
     tokenizer = tiktoken.get_encoding("gpt2")
 
     # Create dataset
@@ -58,7 +62,8 @@ def create_dataloader_v1(txt, batch_size=4, max_length=256,
 # Chapter 3
 #####################################
 class MultiHeadAttention(nn.Module):
-    def __init__(self, d_in, d_out, context_length, dropout, num_heads, qkv_bias=False):
+    """Compute batched causal attention across multiple heads."""
+    def __init__(self, d_in: int, d_out: int, context_length: int, dropout: float, num_heads: int, qkv_bias: bool = False) -> None:
         super().__init__()
         assert d_out % num_heads == 0, "d_out must be divisible by n_heads"
 
@@ -73,7 +78,8 @@ class MultiHeadAttention(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.register_buffer("mask", torch.triu(torch.ones(context_length, context_length), diagonal=1))
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Return causal contexts shaped ``(batch, tokens, d_out)``."""
         b, num_tokens, d_in = x.shape
 
         keys = self.W_key(x)  # Shape: (b, num_tokens, d_out)
@@ -117,13 +123,15 @@ class MultiHeadAttention(nn.Module):
 # Chapter 4
 #####################################
 class LayerNorm(nn.Module):
-    def __init__(self, emb_dim):
+    """Normalize activations over their final dimension."""
+    def __init__(self, emb_dim: int) -> None:
         super().__init__()
         self.eps = 1e-5
         self.scale = nn.Parameter(torch.ones(emb_dim))
         self.shift = nn.Parameter(torch.zeros(emb_dim))
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Normalize a tensor while preserving its shape."""
         mean = x.mean(dim=-1, keepdim=True)
         var = x.var(dim=-1, keepdim=True, unbiased=False)
         norm_x = (x - mean) / torch.sqrt(var + self.eps)
@@ -131,10 +139,12 @@ class LayerNorm(nn.Module):
 
 
 class GELU(nn.Module):
-    def __init__(self):
+    """Apply the Gaussian error linear unit approximation."""
+    def __init__(self) -> None:
         super().__init__()
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Apply GELU elementwise and return a tensor with the input shape."""
         return 0.5 * x * (1 + torch.tanh(
             torch.sqrt(torch.tensor(2.0 / torch.pi)) *
             (x + 0.044715 * torch.pow(x, 3))
@@ -142,7 +152,8 @@ class GELU(nn.Module):
 
 
 class FeedForward(nn.Module):
-    def __init__(self, cfg):
+    """Expand, activate, and project transformer representations."""
+    def __init__(self, cfg: dict[str, int | float | bool]) -> None:
         super().__init__()
         self.layers = nn.Sequential(
             nn.Linear(cfg["emb_dim"], 4 * cfg["emb_dim"]),
@@ -150,12 +161,14 @@ class FeedForward(nn.Module):
             nn.Linear(4 * cfg["emb_dim"], cfg["emb_dim"]),
         )
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Transform embeddings while preserving ``(batch, tokens, emb_dim)``."""
         return self.layers(x)
 
 
 class TransformerBlock(nn.Module):
-    def __init__(self, cfg):
+    """Apply causal attention and feed-forward residual sublayers."""
+    def __init__(self, cfg: dict[str, int | float | bool]) -> None:
         super().__init__()
         self.att = MultiHeadAttention(
             d_in=cfg["emb_dim"],
@@ -169,8 +182,9 @@ class TransformerBlock(nn.Module):
         self.norm2 = LayerNorm(cfg["emb_dim"])
         self.drop_shortcut = nn.Dropout(cfg["drop_rate"])
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         # Shortcut connection for attention block
+        """Transform and return ``(batch, tokens, emb_dim)`` activations."""
         shortcut = x
         x = self.norm1(x)
         x = self.att(x)   # Shape [batch_size, num_tokens, emb_size]
@@ -188,7 +202,8 @@ class TransformerBlock(nn.Module):
 
 
 class GPTModel(nn.Module):
-    def __init__(self, cfg):
+    """Map token-ID sequences to vocabulary logits."""
+    def __init__(self, cfg: dict[str, int | float | bool]) -> None:
         super().__init__()
         self.tok_emb = nn.Embedding(cfg["vocab_size"], cfg["emb_dim"])
         self.pos_emb = nn.Embedding(cfg["context_length"], cfg["emb_dim"])
@@ -200,7 +215,8 @@ class GPTModel(nn.Module):
         self.final_norm = LayerNorm(cfg["emb_dim"])
         self.out_head = nn.Linear(cfg["emb_dim"], cfg["vocab_size"], bias=False)
 
-    def forward(self, in_idx):
+    def forward(self, in_idx: torch.Tensor) -> torch.Tensor:
+        """Return ``(batch, tokens, vocab_size)`` logits for ``(batch, tokens)`` IDs."""
         batch_size, seq_len = in_idx.shape
         tok_embeds = self.tok_emb(in_idx)
         pos_embeds = self.pos_emb(torch.arange(seq_len, device=in_idx.device))
@@ -212,8 +228,9 @@ class GPTModel(nn.Module):
         return logits
 
 
-def generate_text_simple(model, idx, max_new_tokens, context_size):
+def generate_text_simple(model: torch.nn.Module, idx: torch.Tensor, max_new_tokens: int, context_size: int) -> torch.Tensor:
     # idx is (B, T) array of indices in the current context
+    """Append generated IDs to a ``(batch, tokens)`` tensor and return the result."""
     for _ in range(max_new_tokens):
 
         # Crop current context if it exceeds the supported context size
@@ -238,12 +255,14 @@ def generate_text_simple(model, idx, max_new_tokens, context_size):
     return idx
 
 
-def text_to_token_ids(text, tokenizer):
+def text_to_token_ids(text: str, tokenizer: tiktoken.Encoding) -> torch.Tensor:
+    """Encode text as a token tensor shaped ``(1, tokens)``."""
     encoded = tokenizer.encode(text, allowed_special={"<|endoftext|>"})
     return torch.tensor(encoded).unsqueeze(0)
 
 
-def token_ids_to_text(token_ids, tokenizer):
+def token_ids_to_text(token_ids: torch.Tensor, tokenizer: tiktoken.Encoding) -> str:
+    """Decode a token-ID tensor into text."""
     flat = token_ids.squeeze(0)
     return tokenizer.decode(flat.tolist())
 

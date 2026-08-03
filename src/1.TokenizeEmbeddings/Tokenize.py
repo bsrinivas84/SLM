@@ -1,3 +1,5 @@
+"""Build a token vocabulary from the Verdict text."""
+
 import os
 import re
 

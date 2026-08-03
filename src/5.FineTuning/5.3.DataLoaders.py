@@ -1,3 +1,5 @@
+"""Create padded SMS spam datasets and data loaders."""
+
 from pathlib import Path
 
 import pandas as pd
@@ -14,6 +16,11 @@ NUM_WORKERS = 0
 
 
 class SpamDataset(Dataset):
+    """Load, tokenize, pad, and label SMS spam examples.
+
+    Raises:
+        ValueError: If ``max_length`` is nonpositive or an inferred dataset is empty.
+    """
     def __init__(
         self,
         csv_file: str | Path,
@@ -60,6 +67,7 @@ class SpamDataset(Dataset):
 
 
 def create_datasets() -> tuple[SpamDataset, SpamDataset, SpamDataset]:
+    """Return training, validation, and test datasets with equal sequence lengths."""
     tokenizer = tiktoken.get_encoding("gpt2")
     train_dataset = SpamDataset(DATA_DIR / "train.csv", tokenizer)
     validation_dataset = SpamDataset(
@@ -72,6 +80,7 @@ def create_datasets() -> tuple[SpamDataset, SpamDataset, SpamDataset]:
 
 
 def create_data_loaders() -> tuple[DataLoader, DataLoader, DataLoader]:
+    """Return training, validation, and test data loaders."""
     train_dataset, validation_dataset, test_dataset = create_datasets()
     torch.manual_seed(123)
 

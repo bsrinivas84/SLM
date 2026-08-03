@@ -1,12 +1,20 @@
+"""Implement and demonstrate a vocabulary-based tokenizer."""
+
 import re
 
 
 class SimpleTokenizerV1:
-    def __init__(self, vocab):
+    """Encode text with a fixed token-to-integer vocabulary."""
+    def __init__(self, vocab: dict[str, int]) -> None:
         self.str_to_int = vocab
         self.int_to_str = {i: s for s, i in vocab.items()}
 
-    def encode(self, text):
+    def encode(self, text: str) -> list[int]:
+        """Convert text into vocabulary token IDs.
+
+                Raises:
+                    KeyError: If a token is absent from a vocabulary without unknown-token support.
+                """
         preprocessed = re.split(r'([,:;?_!"()\']|--|\s)', text)
         preprocessed = [
             item.strip() for item in preprocessed if item.strip()
@@ -16,7 +24,12 @@ class SimpleTokenizerV1:
         ids = [self.str_to_int[s] for s in preprocessed]
         return ids
 
-    def decode(self, ids):
+    def decode(self, ids: list[int]) -> str:
+        """Convert vocabulary token IDs back into normalized text.
+
+                Raises:
+                    KeyError: If an ID is absent from the vocabulary.
+                """
         text = " ".join([self.int_to_str[i] for i in ids])
         # Replace spaces before the specified punctuations
         text = re.sub(r'\s+([,.?!"()\'])', r'\1', text)

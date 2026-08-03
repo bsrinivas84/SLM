@@ -1,3 +1,5 @@
+"""Demonstrate token and positional embeddings."""
+
 from pathlib import Path
 
 import tiktoken
@@ -6,13 +8,15 @@ from torch.utils.data import Dataset, DataLoader
 
 
 def get_default_device() -> torch.device:
+    """Return the CUDA device when available, otherwise the CPU device."""
     if torch.cuda.is_available():
         return torch.device("cuda")
     return torch.device("cpu")
 
 
 class GPTDatasetV1(Dataset):
-    def __init__(self, txt, tokenizer, max_length, stride):
+    """Store overlapping token-ID inputs and next-token targets."""
+    def __init__(self, txt: str, tokenizer: tiktoken.Encoding, max_length: int, stride: int) -> None:
         self.input_ids = []
         self.target_ids = []
 
@@ -24,14 +28,15 @@ class GPTDatasetV1(Dataset):
             self.input_ids.append(torch.tensor(input_chunk))
             self.target_ids.append(torch.tensor(target_chunk))
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.input_ids)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
         return self.input_ids[idx], self.target_ids[idx]
 
 
-def create_dataloader_v1(txt, batch_size=2, max_length=256, stride=128, shuffle=True, drop_last=True, num_workers=0):
+def create_dataloader_v1(txt: str, batch_size: int = 2, max_length: int = 256, stride: int = 128, shuffle: bool = True, drop_last: bool = True, num_workers: int = 0) -> DataLoader:
+    """Return batches of ``(input_ids, target_ids)`` tensors shaped ``(batch, max_length)``."""
     tokenizer = tiktoken.get_encoding("gpt2")
     dataset = GPTDatasetV1(txt, tokenizer, max_length, stride)
 
@@ -45,7 +50,8 @@ def create_dataloader_v1(txt, batch_size=2, max_length=256, stride=128, shuffle=
     return dataloader
 
 
-def main():
+def main() -> None:
+    """Run the module demonstration or data-preparation workflow."""
     device = get_default_device()
     print(f"Using device: {device}")
 

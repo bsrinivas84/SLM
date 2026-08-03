@@ -1,3 +1,5 @@
+"""Compute self-attention for all input tokens."""
+
 import torch
 
 inputs = torch.tensor(

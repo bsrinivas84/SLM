@@ -1,3 +1,5 @@
+"""Generate tokens with top-k and temperature sampling."""
+
 import torch
 import tiktoken
 
@@ -15,18 +17,21 @@ GPT_CONFIG_124M = {
 }
 
 
-def text_to_token_ids(text, tokenizer):
+def text_to_token_ids(text: str, tokenizer: tiktoken.Encoding) -> torch.Tensor:
+    """Encode text as a token tensor shaped ``(1, tokens)``."""
     encoded = tokenizer.encode(text, allowed_special={"<|endoftext|>"})
     return torch.tensor(encoded).unsqueeze(0)
 
 
-def token_ids_to_text(token_ids, tokenizer):
+def token_ids_to_text(token_ids: torch.Tensor, tokenizer: tiktoken.Encoding) -> str:
+    """Decode a token-ID tensor into text."""
     flat = token_ids.squeeze(0)
     return tokenizer.decode(flat.tolist())
 
-def generate_text_simple(model, idx, max_new_tokens, context_size, temperature=0.0,
-                         top_k=None, eos_token_id=None):
+def generate_text_simple(model: torch.nn.Module, idx: torch.Tensor, max_new_tokens: int, context_size: int, temperature: float = 0.0,
+                         top_k: int | None = None, eos_token_id: int | None = None) -> torch.Tensor:
     # idx is (B, T) array of indices in the current context
+    """Append generated IDs to a ``(batch, tokens)`` tensor and return the result."""
     for _ in range(max_new_tokens):
 
         # Crop current context if it exceeds the supported context size

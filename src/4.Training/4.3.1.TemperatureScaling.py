@@ -1,3 +1,5 @@
+"""Demonstrate temperature-based token sampling."""
+
 import matplotlib.pyplot as plt
 import tiktoken
 import torch
@@ -16,17 +18,20 @@ GPT_CONFIG_124M = {
 }
 
 
-def text_to_token_ids(text, tokenizer):
+def text_to_token_ids(text: str, tokenizer: tiktoken.Encoding) -> torch.Tensor:
+    """Encode text as a token tensor shaped ``(1, tokens)``."""
     encoded = tokenizer.encode(text, allowed_special={"<|endoftext|>"})
     return torch.tensor(encoded).unsqueeze(0)
 
 
-def token_ids_to_text(token_ids, tokenizer):
+def token_ids_to_text(token_ids: torch.Tensor, tokenizer: tiktoken.Encoding) -> str:
+    """Decode a token-ID tensor into text."""
     flat = token_ids.squeeze(0)
     return tokenizer.decode(flat.tolist())
 
 
-def generate_text_simple(model, idx, max_new_tokens, context_size):
+def generate_text_simple(model: torch.nn.Module, idx: torch.Tensor, max_new_tokens: int, context_size: int) -> torch.Tensor:
+    """Append generated IDs to a ``(batch, tokens)`` tensor and return the result."""
     for _ in range(max_new_tokens):
         idx_cond = idx[:, -context_size:]
         with torch.no_grad():
@@ -38,7 +43,8 @@ def generate_text_simple(model, idx, max_new_tokens, context_size):
     return idx
 
 
-def print_sampled_tokens(probas, inverse_vocab):
+def print_sampled_tokens(probas: torch.Tensor, inverse_vocab: dict[int, str]) -> None:
+    """Print sampled frequency counts for a one-dimensional probability tensor."""
     torch.manual_seed(123)
     sample = [torch.multinomial(probas, num_samples=1).item() for _ in range(1_000)]
     sampled_ids = torch.bincount(torch.tensor(sample), minlength=len(inverse_vocab))
@@ -46,7 +52,8 @@ def print_sampled_tokens(probas, inverse_vocab):
         print(f"{freq} x {inverse_vocab[index]}")
 
 
-def softmax_with_temperature(logits, temperature):
+def softmax_with_temperature(logits: torch.Tensor, temperature: float) -> torch.Tensor:
+    """Return temperature-scaled probabilities with the same shape as ``logits``."""
     scaled_logits = logits / temperature
     return torch.softmax(scaled_logits, dim=0)
 
