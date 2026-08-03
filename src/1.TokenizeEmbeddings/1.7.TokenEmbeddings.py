@@ -1,9 +1,9 @@
 import torch
 
 def get_default_device() -> torch.device:
-	if torch.cuda.is_available():
-		return torch.device("cuda")
-	return torch.device("cpu")
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    return torch.device("cpu")
 
 
 device = get_default_device()
@@ -13,7 +13,7 @@ print(f"Using device: {device}")
 
 torch.manual_seed(123)  # For reproducibility
 if torch.cuda.is_available():
-	torch.cuda.manual_seed_all(123)
+    torch.cuda.manual_seed_all(123)
 
 vocab_size = 50257
 output_dim = 256
