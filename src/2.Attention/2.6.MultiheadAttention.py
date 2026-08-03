@@ -4,7 +4,7 @@ from pathlib import Path
 import importlib.util
 
 
-dropout_mask_path = Path(__file__).with_name("3_5_2DropoutMask.py")
+dropout_mask_path = Path(__file__).with_name("2_5_2DropoutMask.py")
 spec = importlib.util.spec_from_file_location("dropout_mask_module", dropout_mask_path)
 dropout_mask_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(dropout_mask_module)

@@ -5,7 +5,7 @@ import tiktoken
 import torch
 
 
-_gpt_path = Path(__file__).with_name("4_6_GPTModel.py")
+_gpt_path = Path(__file__).with_name("3_6_GPTModel.py")
 _spec = importlib.util.spec_from_file_location("gpt_model_module", _gpt_path)
 _module = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_module)

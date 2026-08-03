@@ -7,7 +7,7 @@ import torch
 
 
 def import_pretrained_weights() -> ModuleType:
-	module_path = Path(__file__).with_name("6.4.PretrainedWeights.py")
+	module_path = Path(__file__).with_name("5.4.PretrainedWeights.py")
 	spec = importlib.util.spec_from_file_location("pretrained_weights", module_path)
 	if spec is None or spec.loader is None:
 		raise ImportError(f"Could not load module from {module_path}")

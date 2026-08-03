@@ -28,7 +28,7 @@ PREVIOUS_CHAPTERS = import_training_module("PreviousChapters", "PreviousChapters
 
 def initialize_pretrained_model() -> tuple[torch.nn.Module, dict[str, object]]:
 	weight_loader = import_training_module(
-		"load_openai_weights", "5.5.LoadOpenAIWeights.py"
+		"load_openai_weights", "4.5.LoadOpenAIWeights.py"
 	)
 	model, config = weight_loader.load_pretrained_gpt2(CHOOSE_MODEL)
 	return model, config

@@ -5,7 +5,7 @@ import importlib.util
 from pathlib import Path
 
 
-_block_path = Path(__file__).with_name("4_5_TransformerBlock.py")
+_block_path = Path(__file__).with_name("3_5_TransformerBlock.py")
 _spec = importlib.util.spec_from_file_location("transformer_block_module", _block_path)
 _module = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_module)

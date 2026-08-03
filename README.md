@@ -88,10 +88,10 @@ It follows the concepts and implementation presented in
 Load a pretrained model with one of the following commands:
 
 ```powershell
-python 5.5.LoadOpenAIWeights.py --model gpt2-small
-python 5.5.LoadOpenAIWeights.py --model gpt2-medium
-python 5.5.LoadOpenAIWeights.py --model gpt2-large
-python 5.5.LoadOpenAIWeights.py --model gpt2-xl
+python 4.5.LoadOpenAIWeights.py --model gpt2-small
+python 4.5.LoadOpenAIWeights.py --model gpt2-medium
+python 4.5.LoadOpenAIWeights.py --model gpt2-large
+python 4.5.LoadOpenAIWeights.py --model gpt2-xl
 ```
 
 ## 4. Fine-Tuning
