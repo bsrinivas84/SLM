@@ -1,9 +1,12 @@
+"""Implement multi-head causal attention with split heads."""
+
 import torch
 import torch.nn as nn
 
 
 class MultiHeadAttention(nn.Module):
-    def __init__(self, d_in, d_out, context_length, dropout, num_heads, qkv_bias=False):
+    """Compute batched causal attention across multiple heads."""
+    def __init__(self, d_in: int, d_out: int, context_length: int, dropout: float, num_heads: int, qkv_bias: bool = False) -> None:
         super().__init__()
         assert (d_out % num_heads == 0), "d_out must be divisible by num_heads"
 
@@ -21,7 +24,8 @@ class MultiHeadAttention(nn.Module):
             torch.triu(torch.ones(context_length, context_length), diagonal=1),
         )
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Return causal contexts shaped ``(batch, tokens, d_out)``."""
         b, num_tokens, d_in = x.shape
 
         keys = self.W_key(x)

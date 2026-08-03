@@ -1,3 +1,5 @@
+"""Download and load GPT-2 weights without TensorFlow."""
+
 # Load GPT-2 124M model from downloaded OpenAI checkpoint
 # WITHOUT TensorFlow - uses raw checkpoint parsing via numpy/struct
 
@@ -8,11 +10,14 @@ import torch
 
 import PreviousChapters
 
-def load_gpt2_params_from_tf_ckpt_no_tf(model_dir):
+def load_gpt2_params_from_tf_ckpt_no_tf(model_dir: str | Path) -> dict[str, torch.Tensor]:
     """
     Parse TensorFlow checkpoint files directly without importing TensorFlow.
     Reads the .index file to find variable names/shapes/offsets,
     then reads raw bytes from the .data file.
+
+    Raises:
+        NotImplementedError: Always, because raw checkpoint parsing is unsupported.
     """
     model_dir = Path(model_dir)
     data_file = model_dir / "model.ckpt.data-00000-of-00001"
@@ -72,13 +77,20 @@ GPT2_MODELS = {
 }
 
 
-def download_gpt2_from_huggingface(model_dir, model_name="gpt2-small"):
+def download_gpt2_from_huggingface(model_dir: str | Path, model_name: str = "gpt2-small") -> Path:
     """
     Download GPT-2 weights from Hugging Face in safetensors format.
     
     Args:
         model_dir: Directory to save the downloaded files.
         model_name: One of 'gpt2-small', 'gpt2-medium', 'gpt2-large', 'gpt2-xl'.
+
+    Returns:
+        The directory containing the downloaded files.
+
+    Raises:
+        ValueError: If ``model_name`` is unsupported.
+        requests.HTTPError: If a download returns an HTTP error.
     """
     import requests
 
@@ -109,10 +121,13 @@ def download_gpt2_from_huggingface(model_dir, model_name="gpt2-small"):
     return model_dir
 
 
-def load_gpt2_safetensors(model_dir):
+def load_gpt2_safetensors(model_dir: str | Path) -> tuple[dict[str, object], dict[str, torch.Tensor]]:
     """
     Load GPT-2 weights from safetensors file using PyTorch directly.
     Returns (settings, params_dict) where params_dict maps tensor names to torch tensors.
+
+    Raises:
+        FileNotFoundError: If the configuration or weights file is absent.
     """
     from safetensors.torch import load_file
 
@@ -126,7 +141,7 @@ def load_gpt2_safetensors(model_dir):
     return settings, params
 
 
-def settings_to_local_config(settings):
+def settings_to_local_config(settings: dict[str, object]) -> dict[str, int | float | bool]:
     """Map HuggingFace GPT-2 config keys to local GPTModel config keys."""
     return {
         "vocab_size": settings.get("vocab_size", 50257),
@@ -139,10 +154,13 @@ def settings_to_local_config(settings):
     }
 
 
-def assign_gpt2_weights(model, params):
+def assign_gpt2_weights(model: torch.nn.Module, params: dict[str, torch.Tensor]) -> None:
     """
     Assign HuggingFace GPT-2 safetensors weights to local GPTModel.
     Uses pure PyTorch tensors (no numpy needed).
+
+    Raises:
+        KeyError: If a required GPT-2 weight is absent.
     """
     import torch
 
@@ -195,8 +213,12 @@ def assign_gpt2_weights(model, params):
     model.out_head.weight.data = params["wte.weight"]
 
 
-def load_pretrained_gpt2(model_name="gpt2-small"):
-    """Build GPTModel and load Hugging Face safetensors without TensorFlow."""
+def load_pretrained_gpt2(model_name: str = "gpt2-small") -> tuple[torch.nn.Module, dict[str, int | float | bool]]:
+    """Build GPTModel and return it with its local configuration.
+
+    Raises:
+        ValueError: If ``model_name`` is unsupported.
+    """
     if model_name not in GPT2_MODELS:
         raise ValueError(f"Unknown model: {model_name}. Choose from: {list(GPT2_MODELS)}")
 

@@ -1,3 +1,5 @@
+"""Compose causal attention heads into multi-head attention."""
+
 import torch
 import torch.nn as nn
 from pathlib import Path
@@ -13,14 +15,16 @@ CausalAttention = dropout_mask_module.CausalAttention
 
 
 class MultiheadAttention(nn.Module):
-    def __init__(self, d_in, d_out, context_length, dropout, qkv_bias, num_heads=2):
+    """Concatenate outputs from independent causal attention heads."""
+    def __init__(self, d_in: int, d_out: int, context_length: int, dropout: float, qkv_bias: bool, num_heads: int = 2) -> None:
         super().__init__()
         self.heads = nn.ModuleList([CausalAttention(d_in, d_out, context_length, dropout, qkv_bias) for
     _ in range(num_heads)])
         
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         # Concatenate the outputs from all heads along the last dimension
+        """Return concatenated contexts shaped ``(batch, tokens, heads * d_out)``."""
         return torch.cat([head(x) for head in self.heads], dim=-1) 
     
 

@@ -1,12 +1,16 @@
+"""Demonstrate residual connections and their gradients."""
+
 import torch
 import torch.nn as nn
 
 
 class GELU(nn.Module):
-    def __init__(self):
+    """Apply the Gaussian error linear unit approximation."""
+    def __init__(self) -> None:
         super().__init__()
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Apply GELU elementwise and return a tensor with the input shape."""
         return 0.5 * x * (1 + torch.tanh(
             torch.sqrt(torch.tensor(2.0 / torch.pi)) *
             (x + 0.044715 * torch.pow(x, 3))
@@ -14,7 +18,8 @@ class GELU(nn.Module):
 
 
 class ExampleDeepNeuralNetwork(nn.Module):
-    def __init__(self, layer_sizes, use_shortcut):
+    """Stack feed-forward layers with optional residual shortcuts."""
+    def __init__(self, layer_sizes: list[int], use_shortcut: bool) -> None:
         super().__init__()
         self.use_shortcut = use_shortcut
         self.layers = nn.ModuleList([
@@ -25,7 +30,8 @@ class ExampleDeepNeuralNetwork(nn.Module):
             nn.Sequential(nn.Linear(layer_sizes[4], layer_sizes[5]), GELU()),
         ])
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Apply each layer and return its final two-dimensional output tensor."""
         for layer in self.layers:
             # Compute the output of the current layer.
             layer_output = layer(x)
@@ -37,7 +43,8 @@ class ExampleDeepNeuralNetwork(nn.Module):
         return x
 
 
-def print_gradients(model, x):
+def print_gradients(model: nn.Module, x: torch.Tensor) -> None:
+    """Print mean absolute weight gradients after one regression step."""
     model.zero_grad()
 
     # Forward pass.

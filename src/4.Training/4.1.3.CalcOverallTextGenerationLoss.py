@@ -1,3 +1,5 @@
+"""Calculate language-model losses over data loaders."""
+
 import torch
 from torch import nn
 import tiktoken
@@ -79,14 +81,16 @@ print("Total validation tokens:", val_tokens)
 print("Total tokens (train + validation):", train_tokens + val_tokens)
 
 
-def calc_loss_batch(input_batch, target_batch, model, device):
+def calc_loss_batch(input_batch: torch.Tensor, target_batch: torch.Tensor, model: torch.nn.Module, device: torch.device) -> torch.Tensor:
+    """Return scalar cross-entropy loss for ``(batch, tokens)`` input and target IDs."""
     input_batch, target_batch = input_batch.to(device), target_batch.to(device)
     logits = model(input_batch)
     loss = torch.nn.functional.cross_entropy(logits.flatten(0, 1), target_batch.flatten())
     return loss
 
 
-def calc_loss_loader(data_loader, model, device, num_batches=None):
+def calc_loss_loader(data_loader: torch.utils.data.DataLoader, model: torch.nn.Module, device: torch.device, num_batches: int | None = None) -> float:
+    """Return mean batch loss, or NaN when the loader is empty."""
     total_loss = 0.
     if len(data_loader) == 0:
         return float("nan")

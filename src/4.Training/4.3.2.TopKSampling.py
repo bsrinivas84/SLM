@@ -1,3 +1,5 @@
+"""Demonstrate top-k filtering of token logits."""
+
 import torch
 
 

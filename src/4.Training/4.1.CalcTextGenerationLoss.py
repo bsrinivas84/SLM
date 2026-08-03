@@ -1,3 +1,5 @@
+"""Demonstrate token-level cross-entropy loss calculation."""
+
 from PreviousChapters import GPTModel
 import torch
 import tiktoken
@@ -14,7 +16,8 @@ GPT_CONFIG_124M = {
 }
 
 
-def token_ids_to_text(token_ids, tokenizer):
+def token_ids_to_text(token_ids: torch.Tensor, tokenizer: tiktoken.Encoding) -> str:
+    """Decode a token-ID tensor into text."""
     flat = token_ids.flatten()
     return tokenizer.decode(flat.tolist())
 

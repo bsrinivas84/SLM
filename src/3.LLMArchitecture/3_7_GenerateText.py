@@ -1,3 +1,5 @@
+"""Generate text greedily with a GPT model."""
+
 import importlib.util
 from pathlib import Path
 
@@ -13,7 +15,8 @@ GPTModel = _module.GPTModel
 GPT_CONFIG_124M = _module.GPT_CONFIG_124M
 
 
-def generate_text_simple(model, idx, max_new_tokens, context_size):
+def generate_text_simple(model: torch.nn.Module, idx: torch.Tensor, max_new_tokens: int, context_size: int) -> torch.Tensor:
+    """Append generated IDs to a ``(batch, tokens)`` tensor and return the result."""
     for _ in range(max_new_tokens):
         idx_cond = idx[:, -context_size:]
 

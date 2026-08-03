@@ -1,8 +1,11 @@
+"""Implement causal attention with dropout."""
+
 import torch
 import torch.nn as nn
 
 class CausalAttention(nn.Module):
-    def __init__(self, d_in, d_out, context_length, dropout, qkv_bias=False):
+    """Compute batched causal self-attention with dropout."""
+    def __init__(self, d_in: int, d_out: int, context_length: int, dropout: float, qkv_bias: bool = False) -> None:
         super().__init__()
         self.W_query = nn.Linear(d_in, d_out, bias=qkv_bias)
         self.W_key = nn.Linear(d_in, d_out, bias=qkv_bias)
@@ -13,7 +16,8 @@ class CausalAttention(nn.Module):
         self.register_buffer("mask_var", torch.triu(torch.ones(context_length, context_length), diagonal=1))
 
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Transform ``(batch, tokens, d_in)`` inputs to ``(batch, tokens, d_out)``."""
         queries = self.W_query(x)
         keys = self.W_key(x)
         values = self.W_value(x)

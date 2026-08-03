@@ -1,3 +1,5 @@
+"""Implement GELU and a transformer feed-forward network."""
+
 #Gelu adding Non-linearity for learning complex representations
 #  and Feedforward layer for transformer block
 
@@ -31,10 +33,12 @@ GPT_CONFIG_124M = {
 
 
 class GELU(nn.Module):
-    def __init__(self):
+    """Apply the Gaussian error linear unit approximation."""
+    def __init__(self) -> None:
         super().__init__()
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Apply GELU elementwise and return a tensor with the input shape."""
         return 0.5 * x * (1 + torch.tanh(
             torch.sqrt(torch.tensor(2.0 / torch.pi)) *
             (x + 0.044715 * torch.pow(x, 3))
@@ -42,7 +46,8 @@ class GELU(nn.Module):
 
 
 class FeedForward(nn.Module):
-    def __init__(self, cfg):
+    """Expand, activate, and project transformer representations."""
+    def __init__(self, cfg: dict[str, int | float | bool]) -> None:
         super().__init__()
         self.layers = nn.Sequential(
             nn.Linear(cfg["emb_dim"], 4 * cfg["emb_dim"]),
@@ -50,7 +55,8 @@ class FeedForward(nn.Module):
             nn.Linear(4 * cfg["emb_dim"], cfg["emb_dim"]),
         )
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Transform embeddings while preserving ``(batch, tokens, emb_dim)``."""
         return self.layers(x)
 
 

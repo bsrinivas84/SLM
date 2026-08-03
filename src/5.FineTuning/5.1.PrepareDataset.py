@@ -1,3 +1,5 @@
+"""Download, balance, and split the SMS spam dataset."""
+
 import shutil
 import urllib.error
 import urllib.request
@@ -21,6 +23,12 @@ BACKUP_URL = (
 
 
 def download_and_extract(url: str) -> None:
+    """Download and extract the SMS spam collection.
+
+        Raises:
+            urllib.error.URLError: If the dataset cannot be downloaded.
+            zipfile.BadZipFile: If the downloaded archive is invalid.
+        """
     if DATA_FILE.exists():
         print(f"{DATA_FILE} already exists. Skipping download.")
         return
@@ -37,6 +45,7 @@ def download_and_extract(url: str) -> None:
 
 
 def create_balanced_dataset(dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Return equal-sized ham and spam subsets in a new data frame."""
     spam_rows = dataframe[dataframe["Label"] == "spam"]
     ham_subset = dataframe[dataframe["Label"] == "ham"].sample(
         n=len(spam_rows), random_state=123
@@ -47,6 +56,7 @@ def create_balanced_dataset(dataframe: pd.DataFrame) -> pd.DataFrame:
 def random_split(
     dataframe: pd.DataFrame, train_fraction: float, validation_fraction: float
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Shuffle and return training, validation, and test data frames."""
     dataframe = dataframe.sample(frac=1, random_state=123).reset_index(drop=True)
     train_end = int(len(dataframe) * train_fraction)
     validation_end = train_end + int(len(dataframe) * validation_fraction)
@@ -58,6 +68,7 @@ def random_split(
 
 
 def main() -> None:
+    """Run the module demonstration or data-preparation workflow."""
     try:
         download_and_extract(PRIMARY_URL)
     except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError):

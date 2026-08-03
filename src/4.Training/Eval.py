@@ -1,3 +1,5 @@
+"""Demonstrate token conversion and greedy GPT generation."""
+
 from PreviousChapters import GPTModel, generate_text_simple
 import torch
 import tiktoken
@@ -18,7 +20,8 @@ model = GPTModel(cfg=GPT_CONFIG_124)
 model.eval()  # Set the model to evaluation mode
 
 
-def text_to_token_ids(text, tokenizer):
+def text_to_token_ids(text: str, tokenizer: tiktoken.Encoding) -> torch.Tensor:
+    """Encode text as a token tensor shaped ``(1, tokens)``."""
     encoded = tokenizer.encode(text, allowed_special={"<|endoftext|>"})
     encoded_tensor = torch.tensor(encoded).unsqueeze(0)  # Add batch dimension.
     return encoded_tensor
@@ -31,7 +34,8 @@ token_ids = text_to_token_ids(start_context, tokenizer)
 print(token_ids)
 
 
-def token_ids_to_text(token_ids, tokenizer):
+def token_ids_to_text(token_ids: torch.Tensor, tokenizer: tiktoken.Encoding) -> str:
+    """Decode a token-ID tensor into text."""
     flat = token_ids.squeeze(0)  # Remove batch dimension.
     return tokenizer.decode(flat.tolist())
 

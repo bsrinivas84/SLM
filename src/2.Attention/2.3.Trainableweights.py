@@ -1,3 +1,5 @@
+"""Demonstrate self-attention with trainable projection weights."""
+
 import torch
 
 inputs = torch.tensor(

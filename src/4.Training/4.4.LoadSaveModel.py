@@ -1,3 +1,5 @@
+"""Demonstrate saving and loading GPT model weights."""
+
 
 import torch
 

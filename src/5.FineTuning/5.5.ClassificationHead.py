@@ -1,3 +1,5 @@
+"""Replace a pretrained GPT model output head for classification."""
+
 import importlib.util
 from pathlib import Path
 from types import ModuleType
@@ -7,6 +9,11 @@ import torch
 
 
 def import_pretrained_weights() -> ModuleType:
+    """Load and return the neighboring pretrained-weight module.
+
+        Raises:
+            ImportError: If an import specification or loader cannot be created.
+        """
     module_path = Path(__file__).with_name("5.4.PretrainedWeights.py")
     spec = importlib.util.spec_from_file_location("pretrained_weights", module_path)
     if spec is None or spec.loader is None:

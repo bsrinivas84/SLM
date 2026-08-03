@@ -1,16 +1,20 @@
+"""Demonstrate causal masking in self-attention."""
+
 # Mask the future words
 import torch.nn as nn
 import torch
 
 
 class SelfAttention_v2(nn.Module):
-    def __init__(self, d_in, d_out, bias=False):
+    """Compute scaled dot-product self-attention with linear projections."""
+    def __init__(self, d_in: int, d_out: int, bias: bool = False) -> None:
         super().__init__()
         self.W_query = nn.Linear(d_in, d_out, bias=bias)
         self.W_keys = nn.Linear(d_in, d_out, bias=bias)
         self.W_values = nn.Linear(d_in, d_out, bias=bias)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Transform ``(tokens, d_in)`` inputs into ``(tokens, d_out)`` context vectors."""
         queries = self.W_query(x)
         keys = self.W_keys(x)
         values = self.W_values(x)
