@@ -4,6 +4,9 @@
 import json
 from pathlib import Path
 import safetensors
+import torch
+
+import PreviousChapters
 
 def load_gpt2_params_from_tf_ckpt_no_tf(model_dir):
     """
@@ -190,6 +193,46 @@ def assign_gpt2_weights(model, params):
 
     # Output head (weight-tied with token embeddings in GPT-2)
     model.out_head.weight.data = params["wte.weight"]
+
+
+def load_pretrained_gpt2(model_name="gpt2-small"):
+    """Build GPTModel and load Hugging Face safetensors without TensorFlow."""
+    if model_name not in GPT2_MODELS:
+        raise ValueError(f"Unknown model: {model_name}. Choose from: {list(GPT2_MODELS)}")
+
+    root = Path(__file__).resolve().parents[2]
+    model_dir = root / "data" / "models" / GPT2_MODELS[model_name]["params"]
+    saved_weights_path = model_dir / "model_weights.pth"
+    config_path = model_dir / "config.json"
+    model_dir.mkdir(parents=True, exist_ok=True)
+
+    if saved_weights_path.exists() and config_path.exists():
+        settings = json.loads(config_path.read_text(encoding="utf-8"))
+        local_config = settings_to_local_config(settings)
+        model = PreviousChapters.GPTModel(local_config)
+        model.load_state_dict(
+            torch.load(saved_weights_path, map_location="cpu", weights_only=True)
+        )
+    else:
+        legacy_small_cache = root / "data" / "models" / "gpt2_hf"
+        if model_name == "gpt2-small" and all(
+            (legacy_small_cache / filename).exists()
+            for filename in ("config.json", "model.safetensors")
+        ):
+            download_dir = legacy_small_cache
+        else:
+            download_dir = model_dir / "hf_download"
+            download_gpt2_from_huggingface(download_dir, model_name=model_name)
+
+        settings, params = load_gpt2_safetensors(download_dir)
+        local_config = settings_to_local_config(settings)
+        model = PreviousChapters.GPTModel(local_config)
+        assign_gpt2_weights(model, params)
+        config_path.write_text(json.dumps(settings, indent=2), encoding="utf-8")
+        torch.save(model.state_dict(), saved_weights_path)
+
+    model.eval()
+    return model, local_config
 
 
 if __name__ == "__main__":
