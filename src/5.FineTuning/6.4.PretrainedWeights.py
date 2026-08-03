@@ -7,7 +7,7 @@ import tiktoken
 import torch
 
 
-TRAINING_DIR = Path(__file__).resolve().parents[1] / "Training"
+TRAINING_DIR = Path(__file__).resolve().parents[1] / "4.Training"
 CHOOSE_MODEL = "gpt2-small"
 
 

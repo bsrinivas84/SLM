@@ -19,7 +19,7 @@ It follows the concepts and implementation presented in
 5. Positional embeddings
 6. Input embeddings
 
-![Tokenization and embeddings](Images/Ch2.png)
+![Tokenization and embeddings](Images/1-TokenEmbeddingPipeline.png)
 
 ### 2.2 Attention Mechanism
 
@@ -28,39 +28,39 @@ It follows the concepts and implementation presented in
 3. Causal attention
 4. Multi-head attention
 
-![Attention mechanism](Images/Ch3-Attention.png)
+![Attention mechanism](Images/2-Attention.png)
 
 ### 2.3 LLM Architecture
 
-![Transformer block](Images/Ch4-TransformerBlock.png)
+![Transformer block](Images/3-TransformerBlock.png)
 
-![Transformer pipeline](Images/Ch4-TransformerPipeline.png)
+![Transformer pipeline](Images/3-TransformerPipeline.png)
 
 #### 2.3.1 Layer Normalization
 
-![Layer normalization](Images/Ch4-1_LayerNorm.png)
+![Layer normalization](Images/3-1_LayerNorm.png)
 
 #### 2.3.2 Transformer Block Internals
 
-![Transformer block internals](Images/Ch4-TransforerBlockInternals.png)
+![Transformer block internals](Images/3-TransforerBlockInternals.png)
 
 #### 2.3.3 Shortcut Connections
 
-![Shortcut connection](Images/Ch4-ShortcutConnection.png)
+![Shortcut connection](Images/3-ShortcutConnection.png)
 
 #### 2.3.4 Transformer Block
 
-![Transformer block details](Images/Ch4-TransformerBlock-Detail.png)
+![Transformer block details](Images/3-TransformerBlock-Detail.png)
 
 #### 2.3.5 GPT Model and Text Generation
 
-![Text generation](Images/Ch4-GenerateText.png)
+![Text generation](Images/3-GenerateText.png)
 
 ### 2.4 Loss and Training Loop
 
-![Cross-entropy loss](Images/Ch5-CrossEntropyLoss.png)
+![Cross-entropy loss](Images/4-CrossEntropyLoss.png)
 
-![Training loop](Images/Ch5-TrainingLoop.png)
+![Training loop](Images/4-TrainingLoop.png)
 
 ### 2.5 Output Word Derivation
 
@@ -72,11 +72,11 @@ It follows the concepts and implementation presented in
 
 ### 3.1 Training Overview
 
-![Training overview](Images/Ch5-Training5.png)
+![Training overview](Images/4-Training5.png)
 
 ### 3.2 Model Sizes
 
-![Different model sizes](Images/Ch6-ModelSizes.png)
+![Different model sizes](Images/5-ModelSizes.png)
 
 | Model | Parameters | Approximate download size |
 | --- | ---: | ---: |
@@ -96,12 +96,12 @@ python 5.5.LoadOpenAIWeights.py --model gpt2-xl
 
 ## 4. Fine-Tuning
 
-![Fine-tuning pipeline](Images/Ch6-FineTuning.png)
+![Fine-tuning pipeline](Images/5-FineTuning.png)
 
 1. Download and preprocess the dataset, then create data loaders.
 2. Initialize the model, load pretrained weights, and adapt it for fine-tuning (Modify last layer).
 3. Fine-tune and evaluate the model, then use it to classify new data.
-![FineTuning-Layers](Images/Ch6-FineTuning-Layers.png)
+![FineTuning-Layers](Images/5-FineTuning-Layers.png)
 
 ## 5. Getting Started
 
