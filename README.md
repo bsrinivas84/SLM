@@ -103,16 +103,26 @@ python 4.5.LoadOpenAIWeights.py --model gpt2-xl
 3. Fine-tune and evaluate the model, then use it to classify new data.
 ![FineTuning-Layers](Images/5-FineTuning-Layers.png)
 
-## 5. Getting Started
+## 5. Instruction Fine-Tuning
 
-### 5.1 Create and Activate a Virtual Environment
+![Instruction Fine-Tuning](Images\6-Instruction-Fine-Tuning-Pipeline.png)
+
+1. Download and convert it into Instruction, Input, Output format
+2. Batching Data set
+   ![BatchingDataset](Images\6-BatchingDataset.png) 
+3. Adding Data loaders + Formatting
+
+
+## 6. Getting Started
+
+### 6.1 Create and Activate a Virtual Environment
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-### 5.2 Install Dependencies
+### 6.2 Install Dependencies
 
 ```powershell
 pip install -r requirements.txt
