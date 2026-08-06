@@ -1,5 +1,14 @@
 # SLM
 
+**Index**
+
+1. [Small Language Model from Scratch](#1-small-language-model-from-scratch)
+2. [Architecture Flow](#2-architecture-flow)
+3. [Training](#3-training)
+4. [Fine-Tuning](#4-fine-tuning)
+5. [Instruction Fine-Tuning](#5-instruction-fine-tuning)
+6. [Getting Started](#6-getting-started)
+
 ## 1. Small Language Model from Scratch
 
 This repository contains code for building a small language model from scratch.
