@@ -105,11 +105,11 @@ python 4.5.LoadOpenAIWeights.py --model gpt2-xl
 
 ## 5. Instruction Fine-Tuning
 
-![Instruction Fine-Tuning](Images\6-Instruction-Fine-Tuning-Pipeline.png)
+![Instruction Fine-Tuning](Images/6-Instruction-Fine-Tuning-Pipeline.png)
 
 1. Download and convert it into Instruction, Input, Output format
 2. Batching Data set
-   ![BatchingDataset](Images\6-BatchingDataset.png) 
+   ![BatchingDataset](Images/6-BatchingDataset.png) 
 3. Adding Data loaders + Formatting
 4. Load Pretrained GPT 2- 355M model
 5. Fine tuning step using sample data
