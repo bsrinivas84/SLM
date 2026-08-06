@@ -111,6 +111,11 @@ python 4.5.LoadOpenAIWeights.py --model gpt2-xl
 2. Batching Data set
    ![BatchingDataset](Images\6-BatchingDataset.png) 
 3. Adding Data loaders + Formatting
+4. Load Pretrained GPT 2- 355M model
+5. Fine tuning step using sample data
+6. Getting responses using the sample data
+7. Scoring the responses using another LLM(Ollama ) as a judge and calculate    
+    accuracy.
 
 
 ## 6. Getting Started

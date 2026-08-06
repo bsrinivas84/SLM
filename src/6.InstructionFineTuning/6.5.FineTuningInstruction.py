@@ -5,6 +5,7 @@ import sys
 import time
 from pathlib import Path
 from types import ModuleType
+from typing import Any
 
 import tiktoken
 import torch
@@ -72,6 +73,38 @@ def load_finetuned_model(
     return model, config
 
 
+def test_finetuned_model(
+    model: torch.nn.Module,
+    config: dict[str, int | float | bool],
+    test_data: list[dict[str, Any]],
+    tokenizer: tiktoken.Encoding,
+    prepare_dataset: ModuleType,
+    pretrained_model: ModuleType,
+) -> None:
+    """Print expected and generated responses for three test examples."""
+    torch.manual_seed(123)
+
+    for entry in test_data[:3]:
+        input_text = prepare_dataset.format_input(entry)
+        generated_text = pretrained_model.generate_text(
+            model,
+            config,
+            input_text,
+            tokenizer,
+            max_new_tokens=256,
+        )
+        response_text = (
+            generated_text[len(input_text) :]
+            .replace("### Response:", "")
+            .strip()
+        )
+
+        print(input_text)
+        print(f"\nCorrect response:\n>> {entry['output']}")
+        print(f"\nModel response:\n>> {response_text}")
+        print("-" * 50)
+
+
 def main() -> None:
     """Calculate initial training and validation losses over five batches."""
     prepare_dataset = import_neighbor("prepare_dataset", "6.1.PrepareDataset.py")
@@ -83,7 +116,7 @@ def main() -> None:
     data = prepare_dataset.download_and_load_file(
         prepare_dataset.DATA_FILE, prepare_dataset.DATA_URL
     )
-    train_data, _, val_data = prepare_dataset.split_data(data)
+    train_data, test_data, val_data = prepare_dataset.split_data(data)
     tokenizer = tiktoken.get_encoding("gpt2")
     train_loader = data_loaders.create_train_loader(train_data, tokenizer)
     val_loader = data_loaders.create_val_loader(val_data, tokenizer)
@@ -135,11 +168,14 @@ def main() -> None:
     loaded_model, config = load_finetuned_model(
         pretrained_model, CHECKPOINT_PATH, device
     )
-    test_prompt = prepare_dataset.format_input(val_data[0]) + "\n\n### Response:\n"
-    generated_text = pretrained_model.generate_text(
-        loaded_model, config, test_prompt, tokenizer
+    test_finetuned_model(
+        loaded_model,
+        config,
+        test_data,
+        tokenizer,
+        prepare_dataset,
+        pretrained_model,
     )
-    print("\nLoaded model test:\n", generated_text)
 
 
 if __name__ == "__main__":

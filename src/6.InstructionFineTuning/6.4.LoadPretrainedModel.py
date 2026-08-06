@@ -96,6 +96,7 @@ def generate_text(
 	config: dict[str, int | float | bool],
 	input_text: str,
 	tokenizer: tiktoken.Encoding,
+	max_new_tokens: int = 35,
 ) -> str:
 	"""Generate and decode a response from the pretrained model."""
 	context_length = config["context_length"]
@@ -112,7 +113,7 @@ def generate_text(
 	token_ids = generation.generate_text_simple(
 		model=model,
 		idx=previous_chapters.text_to_token_ids(input_text, tokenizer).to(device),
-		max_new_tokens=35,
+		max_new_tokens=max_new_tokens,
 		context_size=context_length,
 		eos_token_id=50256,
 	)

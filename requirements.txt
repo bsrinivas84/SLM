@@ -7,3 +7,4 @@ tensorflow
 requests==2.31.0
 tqdm==4.66.1
 safetensor
+psutil==7.2.2
